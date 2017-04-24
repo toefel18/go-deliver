@@ -3,15 +3,17 @@ package main
 import (
 	"net/http"
 	"os"
-
 	"strconv"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"github.com/toefel18/go-deliver/backend/delivery"
 )
 
 func main() {
 	e := echo.New()
+	e.Use(middleware.Logger(), middleware.Recover(), middleware.CORS())
+
 	e.GET("/trips", getTrips)
 	e.GET("/trips/:id", getTrip)
 	e.PATCH("/trips/:id", updateTrip)
