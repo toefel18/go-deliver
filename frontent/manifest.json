@@ -1,0 +1,7 @@
+{
+  "name": "dhl-delivery",
+  "short_name": "dhl-delivery",
+  "description": "Trip Delivery Execution",
+  "start_url": "/",
+  "display": "standalone"
+}

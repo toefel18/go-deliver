@@ -1,0 +1,46 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
+
+<dom-module id="dhl-delivery-app">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+        <h2>Hello [[prop1]]! <span id="name"></span></h2>
+    </template>
+
+    <script>
+        /** @polymerElement */
+        class DhlDeliveryApp extends Polymer.Element {
+            static get is() {
+                return 'dhl-delivery-app';
+            }
+
+            static get properties() {
+                return {
+                    prop1: {
+                        type: String,
+                        value: 'dhl-delivery-app',
+                        observer: 'prop1Changed'
+                    }
+                };
+            }
+
+            ready() {
+                super.ready();
+                setTimeout(function () {
+                    this.$.name.textContent = "say whoot";
+                }.bind(this), 1000);
+            }
+
+            prop1Changed(newVal, oldVal) {
+                this.$.name.textContent = "say whaaaaaaaaaat";
+            }
+        }
+
+        window.customElements.define(DhlDeliveryApp.is, DhlDeliveryApp);
+    </script>
+</dom-module>
