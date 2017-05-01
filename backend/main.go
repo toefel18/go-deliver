@@ -13,7 +13,11 @@ import (
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger(), middleware.Recover(), middleware.CORS())
-
+	if polymerAppSources, set := os.LookupEnv("APP_SOURCES"); set {
+		e.Static("/ui", polymerAppSources)
+	} else {
+		e.Logger.Warn("Did not find APP_SOURCES environment variable, so not exposing /ui with polymer sources!")
+	}
 	e.GET("/trips", getTrips)
 	e.GET("/trips/:id", getTrip)
 	e.PATCH("/trips/:id", updateTrip)
