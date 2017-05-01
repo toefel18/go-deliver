@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -14,9 +15,10 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.Logger(), middleware.Recover(), middleware.CORS())
 	if polymerAppSources, set := os.LookupEnv("APP_SOURCES"); set {
-		e.Static("/ui", polymerAppSources)
+		fmt.Println("serving app at " + polymerAppSources)
+		e.Static("/", polymerAppSources)
 	} else {
-		e.Logger.Warn("Did not find APP_SOURCES environment variable, so not exposing /ui with polymer sources!")
+		fmt.Println("Did not find APP_SOURCES environment variable, so not exposing /ui with polymer sources!")
 	}
 	e.GET("/trips", getTrips)
 	e.GET("/trips/:id", getTrip)
