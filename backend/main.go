@@ -16,7 +16,7 @@ func main() {
 	e.Use(middleware.Logger(), middleware.Recover(), middleware.CORS())
 	if polymerAppSources, set := os.LookupEnv("APP_SOURCES"); set {
 		fmt.Println("serving app at " + polymerAppSources)
-		e.Static("/", polymerAppSources)
+		e.Use(middleware.Static(polymerAppSources))
 	} else {
 		fmt.Println("Did not find APP_SOURCES environment variable, so not exposing /ui with polymer sources!")
 	}
