@@ -9,18 +9,20 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/toefel18/go-deliver/backend/delivery"
-	"golang.org/x/crypto/acme/autocert"
 )
 
 func main() {
 	e := echo.New()
-	e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
 	e.Use(middleware.Logger(), middleware.Recover(), middleware.CORS())
 
 	if polymerAppSources, set := os.LookupEnv("APP_SOURCES"); set {
 		fmt.Println("serving app at " + polymerAppSources)
-		e.Use(middleware.Static(polymerAppSources))
-		e.Static("/", polymerAppSources)
+		e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+			Root: polymerAppSources,
+			Index: "index.html",
+			HTML5: true,
+			Browse: true,
+		}))
 	} else {
 		fmt.Println("Did not find APP_SOURCES environment variable, so not exposing /ui with polymer sources!")
 	}
