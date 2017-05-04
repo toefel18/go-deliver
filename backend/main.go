@@ -13,25 +13,30 @@ import (
 
 func main() {
 	e := echo.New()
-	e.Use(middleware.Logger(), middleware.Recover(), middleware.CORS())
+	e.Use(middleware.Logger(), middleware.Recover(), middleware.CORS(), middleware.AddTrailingSlash(), middleware.HTTPSRedirect())
 
-	if polymerAppSources, set := os.LookupEnv("APP_SOURCES"); set {
-		fmt.Println("serving app at " + polymerAppSources)
-		e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
-			Root: polymerAppSources,
-			Index: "index.html",
-			HTML5: true,
-			Browse: true,
-		}))
-	} else {
-		fmt.Println("Did not find APP_SOURCES environment variable, so not exposing /ui with polymer sources!")
-	}
 	e.GET("/trips", getTrips)
 	e.GET("/trips/:id", getTrip)
 	e.PATCH("/trips/:id", updateTrip)
+	e.POST("/trips/:id", updateTrip)
 	e.GET("/trips/:id/pieces/:pieceId", getPiece)
 	e.PATCH("/trips/:id/pieces/:pieceId", updatePiece)
+	e.POST("/trips/:id/pieces/:pieceId", updatePiece)
 	e.GET("/trips/:id/stops/:stopNumber", getStop)
+
+	if polymerAppSources, set := os.LookupEnv("APP_SOURCES"); set {
+		fmt.Println("serving app at " + polymerAppSources)
+		e.Static("/", polymerAppSources)
+		//e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+		//	Root: polymerAppSources,
+		//	Index: "index.html",
+		//	HTML5: true,
+		//	Browse: true,
+		//}))
+	} else {
+		fmt.Println("Did not find APP_SOURCES environment variable, so not exposing /ui with polymer sources!")
+	}
+
 	e.Logger.Fatal(e.StartTLS(atPort(), "cert.pem", "key.pem"))
 }
 
