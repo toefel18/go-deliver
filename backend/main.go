@@ -15,7 +15,7 @@ const TRIP_NUMBER = "744567"
 
 func main() {
 	e := echo.New()
-	e.Use(middleware.Logger(), middleware.Recover(), middleware.CORS(), middleware.AddTrailingSlash(), middleware.HTTPSRedirect())
+	e.Use(middleware.Logger(), middleware.Recover(), middleware.CORS(), middleware.HTTPSRedirect())
 
 	e.GET("/trips", getTrips)
 	e.GET("/trips/:id", getTrip)
