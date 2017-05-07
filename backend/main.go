@@ -11,6 +11,8 @@ import (
 	"github.com/toefel18/go-deliver/backend/delivery"
 )
 
+const TRIP_NUMBER = "744567"
+
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger(), middleware.Recover(), middleware.CORS(), middleware.AddTrailingSlash(), middleware.HTTPSRedirect())
@@ -23,16 +25,14 @@ func main() {
 	e.PATCH("/trips/:id/pieces/:pieceId", updatePiece)
 	e.POST("/trips/:id/pieces/:pieceId", updatePiece)
 	e.GET("/trips/:id/stops/:stopNumber", getStop)
+	e.GET("/reset", func(c echo.Context) error {
+		trip1 = generateTrip(TRIP_NUMBER)
+		return nil
+	})
 
 	if polymerAppSources, set := os.LookupEnv("APP_SOURCES"); set {
 		fmt.Println("serving app at " + polymerAppSources)
 		e.Static("/", polymerAppSources)
-		//e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
-		//	Root: polymerAppSources,
-		//	Index: "index.html",
-		//	HTML5: true,
-		//	Browse: true,
-		//}))
 	} else {
 		fmt.Println("Did not find APP_SOURCES environment variable, so not exposing /ui with polymer sources!")
 	}
@@ -138,86 +138,90 @@ func getStop(c echo.Context) error {
 	return c.JSONPretty(http.StatusOK, stop, "  ")
 }
 
-/*  TEST DATA BELOW  */
+var trip1 = generateTrip(TRIP_NUMBER)
 
-var biltstraat7 = &delivery.Address{
-	Kixcode:     "NL3572AA000007X",
-	Street:      "Biltstraat",
-	HouseNumber: "7",
-	PostalCode:  "3572AA",
-	City:        "Utrecht",
-	Country:     "Nederland",
-	Longitude:   5.126964,
-	Latitude:    52.094944,
-}
+func generateTrip(tripNumber string) *delivery.Trip {
+	var biltstraat7 = &delivery.Address{
+		Kixcode:     "NL3572AA000007X",
+		Street:      "Biltstraat",
+		HouseNumber: "7",
+		PostalCode:  "3572AA",
+		City:        "Utrecht",
+		Country:     "Nederland",
+		Longitude:   5.126964,
+		Latitude:    52.094944,
+	}
 
-var biltstraat451 = &delivery.Address{
-	Kixcode:     "NL3572AX000451X",
-	Street:      "Biltstraat",
-	HouseNumber: "451",
-	PostalCode:  "3572AX",
-	City:        "Utrecht",
-	Country:     "Nederland",
-	Longitude:   5.136621,
-	Latitude:    52.095425,
-}
+	var biltstraat451 = &delivery.Address{
+		Kixcode:     "NL3572AX000451X",
+		Street:      "Biltstraat",
+		HouseNumber: "451",
+		PostalCode:  "3572AX",
+		City:        "Utrecht",
+		Country:     "Nederland",
+		Longitude:   5.136621,
+		Latitude:    52.095425,
+	}
 
-var runnenbrug21 = &delivery.Address{
-	Kixcode:     "NL3981AZ000021X",
-	Street:      "Runnenburg",
-	HouseNumber: "21",
-	PostalCode:  "3981AZ",
-	City:        "Bunnik",
-	Country:     "Nederland",
-	Longitude:   5.194597,
-	Latitude:    52.063972,
-}
+	var runnenbrug21 = &delivery.Address{
+		Kixcode:     "NL3981AZ000021X",
+		Street:      "Runnenburg",
+		HouseNumber: "21",
+		PostalCode:  "3981AZ",
+		City:        "Bunnik",
+		Country:     "Nederland",
+		Longitude:   5.194597,
+		Latitude:    52.063972,
+	}
 
-var pieceRadio = &delivery.Piece{
-	Id:             "JVGL566684224",
-	ReceiverName:   "Connie Plessen",
-	ShipmentNumber: 163549755,
-	Status:         delivery.Sorted,
-}
+	var pieceRadio = &delivery.Piece{
+		Id:             "JVGL566684224",
+		ReceiverName:   "Connie Plessen",
+		ShipmentNumber: 163549755,
+		Status:         delivery.Sorted,
+	}
 
-var pieceAntenna = &delivery.Piece{
-	Id:             "JVGL566684225",
-	ReceiverName:   "Connie Plessen",
-	ShipmentNumber: 163549755,
-	Status:         delivery.Sorted,
-}
+	var pieceAntenna = &delivery.Piece{
+		Id:             "JVGL566684225",
+		ReceiverName:   "Connie Plessen",
+		ShipmentNumber: 163549755,
+		Status:         delivery.Sorted,
+	}
 
-var pieceVoerbak = &delivery.Piece{
-	Id:             "JVGL79984753",
-	ReceiverName:   "Sjef Speciaal",
-	ShipmentNumber: 763249799,
-	Status:         delivery.Sorted,
-}
+	var pieceVoerbak = &delivery.Piece{
+		Id:             "JVGL79984753",
+		ReceiverName:   "Sjef Speciaal",
+		ShipmentNumber: 763249799,
+		Status:         delivery.Sorted,
+	}
 
-var pieceKussen = &delivery.Piece{
-	Id:             "JVGL89861267",
-	ReceiverName:   "Ronald Reigan",
-	ShipmentNumber: 497983327,
-	Status:         delivery.Sorted,
-}
+	var pieceKussen = &delivery.Piece{
+		Id:             "JVGL89861267",
+		ReceiverName:   "Ronald Reigan",
+		ShipmentNumber: 497983327,
+		Status:         delivery.Sorted,
+	}
 
-var stopBiltstraat7 = &delivery.Stop{
-	Address: biltstraat7,
-	Pieces:  []*delivery.Piece{pieceRadio, pieceAntenna},
-}
+	var stopBiltstraat7 = &delivery.Stop{
+		Address: biltstraat7,
+		Pieces:  []*delivery.Piece{pieceRadio, pieceAntenna},
+	}
 
-var stopBiltstraat451 = &delivery.Stop{
-	Address: biltstraat451,
-	Pieces:  []*delivery.Piece{pieceVoerbak},
-}
+	var stopBiltstraat451 = &delivery.Stop{
+		Address: biltstraat451,
+		Pieces:  []*delivery.Piece{pieceVoerbak},
+	}
 
-var stopRunnenburg = &delivery.Stop{
-	Address: runnenbrug21,
-	Pieces:  []*delivery.Piece{pieceKussen},
-}
+	var stopRunnenburg = &delivery.Stop{
+		Address: runnenbrug21,
+		Pieces:  []*delivery.Piece{pieceKussen},
+	}
 
-var trip1 = &delivery.Trip{
-	TripNumber: "744567",
-	Stops:      []*delivery.Stop{stopBiltstraat7, stopBiltstraat451, stopRunnenburg},
-	Status:     delivery.Ready,
+	var trip = &delivery.Trip{
+		TripNumber: tripNumber,
+		Stops:      []*delivery.Stop{stopBiltstraat7, stopBiltstraat451, stopRunnenburg},
+		Status:     delivery.Ready,
+	}
+
+	return trip
 }
