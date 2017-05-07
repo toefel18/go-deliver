@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -14,8 +15,20 @@ import (
 const TRIP_NUMBER = "744567"
 
 func main() {
+	file, err := os.Create("/tmp/dhl-backend.log")
+	if err != nil {
+		fmt.Println("Error opening logfile", err)
+	}
+
 	e := echo.New()
-	e.Use(middleware.Logger(), middleware.Recover(), middleware.CORS(), middleware.HTTPSRedirect())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Skipper: middleware.DefaultSkipper,
+		Format: `{"time":"${time_rfc3339_nano}","id":"${id}","remote_ip":"${remote_ip}","host":"${host}",` +
+			`"method":"${method}","uri":"${uri}","status":${status}, "latency":${latency},` +
+			`"latency_human":"${latency_human}","bytes_in":${bytes_in},` +
+			`"bytes_out":${bytes_out}}` + "\n",
+		Output: io.MultiWriter(os.Stdout, file),
+	}), middleware.Recover(), middleware.CORS(), middleware.HTTPSRedirect())
 
 	e.GET("/trips", getTrips)
 	e.GET("/trips/:id", getTrip)
