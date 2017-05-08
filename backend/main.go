@@ -90,12 +90,12 @@ func updateTrip(c echo.Context) error {
 		if err := trip1.StartDelivery(); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
 		}
-		return c.JSON(http.StatusOK, map[string]string{"message": "trip is in delivery"})
+		return c.JSONPretty(http.StatusOK, trip1, "  ")//c.JSON(http.StatusOK, map[string]string{"message": "trip is in delivery"})
 	} else if request.Operation == "finish" {
 		if err := trip1.Finish(); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
 		}
-		return c.JSON(http.StatusOK, map[string]string{"message": "trip finished"})
+		return c.JSONPretty(http.StatusOK, trip1, "  ")//c.JSON(http.StatusOK, map[string]string{"message": "trip finished"})
 	}
 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "unknown operation"})
 }
@@ -127,7 +127,7 @@ func updatePiece(c echo.Context) error {
 	}
 	if request.Operation == "delivered" {
 		piece.Delivered(request.Signee)
-		return c.JSON(http.StatusOK, map[string]string{"message": "piece " + piece.Id + " delivered, signed by " + piece.Signee})
+		return c.JSONPretty(http.StatusOK, trip1, "  ")//c.JSON(http.StatusOK, map[string]string{"message": "piece " + piece.Id + " delivered, signed by " + piece.Signee})
 	}
 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "unknown operation"})
 }
